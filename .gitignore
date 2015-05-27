@@ -1,0 +1,181 @@
+#include <iostream>
+#include <iomanip>
+using namespace std;
+
+int main()
+{
+	int storage[100], accumulator = 0, instructionCounter = 0, operationCode = 0, operand = 0, instructionRegister = 0;
+	const int READ = 10, WRITE = 11, LOAD = 20, STORE = 21, ADD = 30, SUBTRACT = 31, DIVIDE = 32;
+	const int MULTIPLY = 33, BRANCH = 40, BRANCHNEG = 41, BRANCHZERO = 42, HALT = 43;
+	for (int k = 0; k < 100; k++)
+	{
+		storage[k] = 0;
+	}
+	cout << "*** Welcome to Simpletron! ***" << endl;
+	cout << "*** Please enter your program one instruction ***" << endl;
+	cout << "*** (or data word) at a time. I will type the ***" << endl;
+	cout << "*** location number and a question mark (?).  ***" << endl;
+	cout << "*** You then type the word for that location. ***" << endl;
+	cout << "*** Type the sentinel -99999 to stop entering ***" << endl;
+	cout << "*** your program. ***" << endl;
+	while (instructionCounter < 100)
+	{
+		if (instructionCounter < 10)
+		{
+			cout << "0";
+		}
+		cout << instructionCounter << " ? ";
+		cin >> storage[instructionCounter];
+		if (storage[instructionCounter] == -99999)
+		{
+			break;
+		}
+		if ((storage[instructionCounter]>9999) || (storage[instructionCounter] < -9999))
+		{
+			cout << "enter the number again" << endl;
+			continue;
+		}
+		if (storage[instructionCounter] < 0)
+		{
+			storage[instructionCounter] = storage[instructionCounter] * (-1);
+		}
+		instructionCounter++;
+	}
+	instructionCounter = 0;
+	cout << endl;
+	cout << "*** Program loading completed ***" << endl;
+	cout << "*** Program execution begins ***" << endl;
+	while (instructionCounter < 100)
+	{
+		if (storage[instructionCounter] == 0)
+		{
+			break;
+		}
+		instructionRegister = storage[instructionCounter];
+		operationCode = instructionRegister / 100;
+		operand = instructionRegister % 100;
+		switch (operationCode)
+		{
+		case READ:
+		{
+					 cout << "enter the number to be stored in the given memory location" << endl;
+					 cin >> storage[operand];
+					 break;
+		}
+		case WRITE:
+		{
+					  cout << "the value at this location is " << storage[operand] << endl;
+					  break;
+		}
+		case LOAD:
+		{
+					 accumulator = storage[operand];
+					 cout << "the word is loaded into the accumlator" << endl;
+					 break;
+		}
+		case STORE:
+		{
+					  storage[operand] = accumulator;
+					  cout << "the word has been stored into the memory location from the oprand" << endl;
+					  break;
+		}
+		case ADD:
+		{
+					accumulator = accumulator + storage[operand];
+					cout << "the word from the memory location has been added into the accumulator" << endl;
+					break;
+		}
+		case SUBTRACT:
+		{
+						 accumulator = accumulator - storage[operand];
+						 cout << "the word from the memory location has been subtracted from  the accumulator" << endl;
+						 break;
+		}
+		case DIVIDE:
+		{
+					   if (storage[operand] != 0)
+					   {
+						   accumulator = accumulator / storage[operand];
+						   cout << "the word from the memory location has been divided to the accumulator and the answer is " << accumulator << endl;
+						   break;
+					   }
+					   else
+					   {
+						   cout << "*** Attempt to divide by zero ***" << endl;
+						   cout << "  *** Simpletron execution abnormally terminated ***" << endl;
+						   instructionCounter = 100;
+						   break;
+					   }
+		}
+		case MULTIPLY:
+		{
+						 accumulator = accumulator * storage[operand];
+						 cout << "the word from the memory location has been divided to the accumulator and the answer is " << accumulator << endl;
+						 break;
+		}
+		case BRANCH:
+		{
+					   instructionCounter = operand;
+					   cout << "instruction counter has been branched" << endl;
+					   break;
+		}
+		case BRANCHNEG:
+		{
+						  if (accumulator < 0)
+						  {
+							  instructionCounter = operand;
+							  cout << "instruction counter has been branced according to oprand" << endl;
+						  }
+						  break;
+		}
+		case BRANCHZERO:
+		{
+						   if (accumulator == 0)
+						   {
+							   instructionCounter = operand;
+							   cout << "instruction counter has been nranced according to oprand" << endl;
+						   }
+						   break;
+		}
+		case HALT:
+		{
+					 cout << "*** Simpletron execution terminated ***" << endl;
+					 instructionCounter = 100;
+					 break;
+		}
+		default:
+		{
+				   cout << "***Error!attempts to execute invalid operation codes***" << endl;
+		}
+		}
+		instructionCounter++;
+	}
+	cout << endl;
+	cout << "\tREGISTER" << endl;
+	cout << "Accumulator\t\t" << setfill('0') << setw(1) << internal << showpos << accumulator << endl;
+	cout << "InstructionCounter\t" << setfill('0') << setw(1) << internal << instructionCounter << endl;
+	cout << "InstructionRegister\t" << setfill('0') << setw(1) << internal << showpos << instructionRegister << endl;
+	cout << "OperationCode\t\t" << setfill('0') << setw(1) << internal << operationCode << endl;
+	cout << "operand\t\t\t" << setfill('0') << setw(1) << internal << operand << endl << endl;
+	cout << "storage" << endl << endl;
+	int z = 1;
+	for (int j = 0; j<10; j++)
+		cout << setfill(' ') << setw(1) << internal << noshowpos << j << "\t";
+	cout << endl;
+	for (int i = 0; i <100; i++)
+	{
+		if (i == 0)
+			cout << setfill(' ') << setw(1) << internal << noshowpos << i << "\t";
+		if (i % 9 == 0 && i != 0)
+		{
+			cout << endl;
+			i = i + z;
+			cout << setfill(' ') << setw(1) << internal << noshowpos << i << "\t";
+			i = i - z;
+			z++;
+		}
+		cout << setfill('0') << setw(1) << internal << showpos << storage[i] << "\t";
+	}
+	cout << endl;
+	return 0;
+}
